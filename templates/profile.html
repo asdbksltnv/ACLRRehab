@@ -27,19 +27,14 @@
         </div>
         <div class="form-field">
           <label data-i18n="labelProtocol">Protokol</label>
-          <select name="protocol_id" data-protocol-select>
-            <option value="">—</option>
-            {% for protocol in protocol_options %}
-              <option
-                value="{{ protocol.id }}"
-                data-label-uz="{{ protocol.name_uz }}"
-                data-label-ru="{{ protocol.name_ru }}"
-                {% if user['protocol_id'] == protocol.id %}selected{% endif %}
-              >
-                {{ protocol.name_uz }}
-              </option>
-            {% endfor %}
-          </select>
+          <div class="note">
+            {% if protocol %}
+              <strong>{{ protocol.name_uz }} / {{ protocol.name_ru }}</strong>
+            {% else %}
+              —
+            {% endif %}
+            <span data-i18n="protocolAssignedNote">Protokolni admin biriktiradi.</span>
+          </div>
         </div>
         <button class="btn primary" type="submit" data-i18n="updateButton">Yangilash</button>
       </form>

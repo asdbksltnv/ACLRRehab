@@ -551,6 +551,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
+            username TEXT UNIQUE,
             password_hash TEXT NOT NULL,
             role TEXT NOT NULL DEFAULT 'patient',
             lang TEXT NOT NULL DEFAULT 'uz',
@@ -635,6 +636,8 @@ def init_db():
     columns = {row["name"] for row in db.execute("PRAGMA table_info(users)").fetchall()}
     if "week_override" not in columns:
         db.execute("ALTER TABLE users ADD COLUMN week_override INTEGER")
+    if "username" not in columns:
+        db.execute("ALTER TABLE users ADD COLUMN username TEXT")
     chat_columns = {row["name"] for row in db.execute("PRAGMA table_info(chat_messages)").fetchall()}
     if "image_url" not in chat_columns:
         db.execute("ALTER TABLE chat_messages ADD COLUMN image_url TEXT")
@@ -647,13 +650,16 @@ def init_db():
 def ensure_admin_user():
     admin = query_db("SELECT id FROM users WHERE email = ? AND role = 'admin'", ("admin",), one=True)
     if admin:
+        existing_username = query_db("SELECT username FROM users WHERE id = ?", (admin["id"],), one=True)
+        if existing_username and not existing_username["username"]:
+            execute_db("UPDATE users SET username = ? WHERE id = ?", ("admin", admin["id"]))
         return
     execute_db(
         """
-        INSERT INTO users (email, password_hash, role, lang, created_at)
-        VALUES (?, ?, 'admin', 'ru', ?)
+        INSERT INTO users (email, username, password_hash, role, lang, created_at)
+        VALUES (?, ?, ?, 'admin', 'ru', ?)
         """,
-        ("admin", generate_password_hash("1234"), datetime.utcnow().isoformat()),
+        ("admin", "admin", generate_password_hash("1234"), datetime.utcnow().isoformat()),
     )
 
 
@@ -937,22 +943,25 @@ def register():
         return redirect(url_for("dashboard"))
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
+        username = request.form.get("username", "").strip().lower()
         password = request.form.get("password", "")
         surgery_date = request.form.get("surgery_date") or None
-        protocol_id = request.form.get("protocol_id") or None
-        protocol_options = get_protocol_options()
-        valid_protocols = {p["id"] for p in protocol_options}
-        if protocol_id not in valid_protocols:
-            protocol_id = None
         week_override_raw = request.form.get("postop_week") or ""
         week_override = int(week_override_raw) if week_override_raw.isdigit() else None
 
-        if not email or not password:
+        if not email or not username or not password:
             return render_template(
                 "register.html",
                 error_key="errorRequired",
-                error_message="Email va parol kerak.",
-                protocol_options=protocol_options,
+                error_message="Email, username va parol kerak.",
+                **page_context("register", False),
+            )
+
+        if not email.endswith("@gmail.com"):
+            return render_template(
+                "register.html",
+                error_key="errorGmailRequired",
+                error_message="Faqat Gmail orqali ro'yxatdan o'tish mumkin.",
                 **page_context("register", False),
             )
 
@@ -962,21 +971,30 @@ def register():
                 "register.html",
                 error_key="errorEmailExists",
                 error_message="Bu email allaqachon ro'yxatdan o'tgan.",
-                protocol_options=protocol_options,
+                **page_context("register", False),
+            )
+
+        existing_username = query_db("SELECT id FROM users WHERE username = ?", (username,), one=True)
+        if existing_username:
+            return render_template(
+                "register.html",
+                error_key="errorUsernameExists",
+                error_message="Bu username band.",
                 **page_context("register", False),
             )
 
         password_hash = generate_password_hash(password)
         execute_db(
             """
-            INSERT INTO users (email, password_hash, role, lang, surgery_date, protocol_id, week_override, created_at)
-            VALUES (?, ?, 'patient', 'uz', ?, ?, ?, ?)
+            INSERT INTO users (email, username, password_hash, role, lang, surgery_date, protocol_id, week_override, created_at)
+            VALUES (?, ?, ?, 'patient', 'uz', ?, ?, ?, ?)
             """,
             (
                 email,
+                username,
                 password_hash,
                 surgery_date,
-                protocol_id,
+                None,
                 week_override,
                 datetime.utcnow().isoformat(),
             ),
@@ -985,11 +1003,7 @@ def register():
         session["user_id"] = user["id"]
         return redirect(url_for("dashboard"))
 
-    return render_template(
-        "register.html",
-        protocol_options=get_protocol_options(),
-        **page_context("register", False),
-    )
+    return render_template("register.html", **page_context("register", False))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -997,9 +1011,12 @@ def login():
     if current_user():
         return redirect(url_for("dashboard"))
     if request.method == "POST":
-        email = request.form.get("email", "").strip().lower()
+        identifier = (request.form.get("identifier") or request.form.get("email") or "").strip().lower()
         password = request.form.get("password", "")
-        user = query_db("SELECT * FROM users WHERE email = ?", (email,), one=True)
+        if "@" in identifier:
+            user = query_db("SELECT * FROM users WHERE email = ?", (identifier,), one=True)
+        else:
+            user = query_db("SELECT * FROM users WHERE username = ?", (identifier,), one=True)
         if not user or not check_password_hash(user["password_hash"], password):
             return render_template(
                 "login.html",
@@ -1039,21 +1056,16 @@ def patient_profile():
     user = current_user()
     if request.method == "POST":
         surgery_date = request.form.get("surgery_date") or None
-        protocol_id = request.form.get("protocol_id") or None
-        protocol_options = get_protocol_options()
-        valid_protocols = {p["id"] for p in protocol_options}
-        if protocol_id not in valid_protocols:
-            protocol_id = None
         week_override_raw = request.form.get("postop_week") or ""
         week_override = int(week_override_raw) if week_override_raw.isdigit() else None
         execute_db(
-            "UPDATE users SET surgery_date = ?, protocol_id = ?, week_override = ? WHERE id = ?",
-            (surgery_date, protocol_id, week_override, user["id"]),
+            "UPDATE users SET surgery_date = ?, week_override = ? WHERE id = ?",
+            (surgery_date, week_override, user["id"]),
         )
         user = current_user()
     return render_template(
         "profile.html",
-        protocol_options=get_protocol_options(),
+        protocol=protocol_label(user["protocol_id"]),
         **page_context("profile", True),
     )
 
@@ -1362,6 +1374,7 @@ def api_unread_count():
 @admin_required
 def admin_add_patient():
     email = request.form.get("email", "").strip().lower()
+    username = request.form.get("username", "").strip().lower()
     password = request.form.get("password", "")
     surgery_date = request.form.get("surgery_date") or None
     protocol_id = request.form.get("protocol_id") or None
@@ -1371,16 +1384,20 @@ def admin_add_patient():
     valid_protocols = {p["id"] for p in protocol_options}
     if protocol_id not in valid_protocols:
         protocol_id = None
-    if email and password:
+    if email and username and password:
+        if not email.endswith("@gmail.com"):
+            return redirect(url_for("admin_patients"))
         existing = query_db("SELECT id FROM users WHERE email = ?", (email,), one=True)
-        if not existing:
+        existing_username = query_db("SELECT id FROM users WHERE username = ?", (username,), one=True)
+        if not existing and not existing_username:
             execute_db(
                 """
-                INSERT INTO users (email, password_hash, role, lang, surgery_date, protocol_id, week_override, created_at)
-                VALUES (?, ?, 'patient', 'uz', ?, ?, ?, ?)
+                INSERT INTO users (email, username, password_hash, role, lang, surgery_date, protocol_id, week_override, created_at)
+                VALUES (?, ?, ?, 'patient', 'uz', ?, ?, ?, ?)
                 """,
                 (
                     email,
+                    username,
                     generate_password_hash(password),
                     surgery_date,
                     protocol_id,

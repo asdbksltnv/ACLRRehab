@@ -4,13 +4,17 @@
   <section class="section auth">
     <div class="card auth-card">
       <h2 data-i18n="registerTitle">Ro'yxatdan o'tish</h2>
-      <p data-i18n="registerSub">Operatsiya sanasi va protokolni keyinroq ham tahrirlashingiz mumkin.</p>
+      <p data-i18n="registerSub">Protokolni admin biriktiradi. Siz faqat hisob yaratib, ma'lumotlarni kiriting.</p>
       {% if error_key %}
         <div class="alert danger" data-i18n="{{ error_key }}">{{ error_message }}</div>
       {% endif %}
       <form method="post" class="auth-form">
         <div class="form-field">
-          <label data-i18n="labelEmail">Email</label>
+          <label data-i18n="labelUsername">Username</label>
+          <input type="text" name="username" required />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelGmail">Gmail</label>
           <input type="email" name="email" required />
         </div>
         <div class="form-field">
@@ -24,21 +28,6 @@
         <div class="form-field">
           <label data-i18n="labelPostopWeek">Post-op hafta (qo'lda)</label>
           <input type="number" name="postop_week" min="1" placeholder="1" />
-        </div>
-        <div class="form-field">
-          <label data-i18n="labelProtocol">Protokol</label>
-          <select name="protocol_id" data-protocol-select>
-            <option value="">—</option>
-            {% for protocol in protocol_options %}
-              <option
-                value="{{ protocol.id }}"
-                data-label-uz="{{ protocol.name_uz }}"
-                data-label-ru="{{ protocol.name_ru }}"
-              >
-                {{ protocol.name_uz }}
-              </option>
-            {% endfor %}
-          </select>
         </div>
         <div class="form-actions">
           <button class="btn primary" type="submit" data-i18n="registerButton">Ro'yxatdan o'tish</button>
