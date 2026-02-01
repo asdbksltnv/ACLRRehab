@@ -291,6 +291,13 @@ SEED_PROTOCOLS = [
         ],
     },
     {
+        "id": "moon_acl",
+        "name_uz": "MOON ACL reabilitatsiya yo‘riqnomasi",
+        "name_ru": "Рекомендации MOON ACL",
+        "surgery_tags": ["acl", "moon"],
+        "phases": [],
+    },
+    {
         "id": "partial_meniscectomy",
         "name_uz": "Partial meniscectomy",
         "name_ru": "Частичная менискэктомия",
@@ -610,48 +617,50 @@ def protocol_label(protocol_id):
 
 
 def ensure_seed_data():
-    exercise_count = query_db("SELECT COUNT(*) AS count FROM rehab_exercises", one=True)["count"]
-    if exercise_count == 0:
-        for exercise in SEED_EXERCISES:
-            execute_db(
-                """
-                INSERT INTO rehab_exercises (
-                    id, name_uz, name_ru, description_uz, description_ru,
-                    sets_reps, precautions_uz, precautions_ru, youtube_url, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    exercise["id"],
-                    exercise["name_uz"],
-                    exercise["name_ru"],
-                    exercise.get("description_uz"),
-                    exercise.get("description_ru"),
-                    exercise.get("sets_reps"),
-                    exercise.get("precautions_uz"),
-                    exercise.get("precautions_ru"),
-                    exercise.get("youtube_url", ""),
-                    datetime.utcnow().isoformat(),
-                ),
-            )
+    for exercise in SEED_EXERCISES:
+        exists = query_db("SELECT id FROM rehab_exercises WHERE id = ?", (exercise["id"],), one=True)
+        if exists:
+            continue
+        execute_db(
+            """
+            INSERT INTO rehab_exercises (
+                id, name_uz, name_ru, description_uz, description_ru,
+                sets_reps, precautions_uz, precautions_ru, youtube_url, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                exercise["id"],
+                exercise["name_uz"],
+                exercise["name_ru"],
+                exercise.get("description_uz"),
+                exercise.get("description_ru"),
+                exercise.get("sets_reps"),
+                exercise.get("precautions_uz"),
+                exercise.get("precautions_ru"),
+                exercise.get("youtube_url", ""),
+                datetime.utcnow().isoformat(),
+            ),
+        )
 
-    protocol_count = query_db("SELECT COUNT(*) AS count FROM rehab_protocols", one=True)["count"]
-    if protocol_count == 0:
-        for protocol in SEED_PROTOCOLS:
-            execute_db(
-                """
-                INSERT INTO rehab_protocols (
-                    id, name_uz, name_ru, surgery_tags, phases_json, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    protocol["id"],
-                    protocol["name_uz"],
-                    protocol["name_ru"],
-                    json.dumps(protocol.get("surgery_tags", []), ensure_ascii=False),
-                    json.dumps(protocol.get("phases", []), ensure_ascii=False),
-                    datetime.utcnow().isoformat(),
-                ),
-            )
+    for protocol in SEED_PROTOCOLS:
+        exists = query_db("SELECT id FROM rehab_protocols WHERE id = ?", (protocol["id"],), one=True)
+        if exists:
+            continue
+        execute_db(
+            """
+            INSERT INTO rehab_protocols (
+                id, name_uz, name_ru, surgery_tags, phases_json, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                protocol["id"],
+                protocol["name_uz"],
+                protocol["name_ru"],
+                json.dumps(protocol.get("surgery_tags", []), ensure_ascii=False),
+                json.dumps(protocol.get("phases", []), ensure_ascii=False),
+                datetime.utcnow().isoformat(),
+            ),
+        )
 
 def current_user():
     user_id = session.get("user_id")
