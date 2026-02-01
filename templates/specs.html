@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="architecture">
+    <div class="section-head">
+      <h2 data-i18n="sectionIA">App axborot arxitekturasi + ekranlar</h2>
+      <p data-i18n="sectionIASub">Bemorlarga va adminlarga alohida oqimlar.</p>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3 data-i18n="iaPatient">Bemor</h3>
+        <ul id="patientScreens" class="list"></ul>
+      </div>
+      <div class="card">
+        <h3 data-i18n="iaAdmin">Admin (klinika)</h3>
+        <ul id="adminScreens" class="list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="concepts">
+    <div class="section-head">
+      <h2 data-i18n="sectionConcepts">Kritik reabilitatsiya tushunchalari</h2>
+      <p data-i18n="sectionConceptsSub">Mashina o‘qiy oladigan struktura sifatida kodlangan.</p>
+    </div>
+    <div class="grid three" id="criticalConcepts"></div>
+  </section>
+
+  <section class="section" id="schema">
+    <div class="section-head">
+      <h2 data-i18n="sectionSchema">Ma'lumotlar sxemasi</h2>
+      <p data-i18n="sectionSchemaSub">Relatsion jadvalar + JSON model.</p>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3 data-i18n="schemaTables">Jadvalar</h3>
+        <div id="schemaTables"></div>
+      </div>
+      <div class="card">
+        <h3 data-i18n="schemaJson">Protocol JSON modeli</h3>
+        <pre class="code" id="schemaJson"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="api">
+    <div class="section-head">
+      <h2 data-i18n="sectionApi">API endpointlar</h2>
+      <p data-i18n="sectionApiSub">REST uslubidagi minimal to‘plam.</p>
+    </div>
+    <div class="card">
+      <div id="apiList" class="api-list"></div>
+    </div>
+  </section>
+
+  <section class="section" id="wireframe">
+    <div class="section-head">
+      <h2 data-i18n="sectionWireframe">UI wireframe (matn)</h2>
+      <p data-i18n="sectionWireframeSub">Mobil-first oqimlar va komponentlar tavsifi.</p>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3 data-i18n="wireframePatient">Bemor oqimi</h3>
+        <ol id="wireframePatient" class="list ordered"></ol>
+      </div>
+      <div class="card">
+        <h3 data-i18n="wireframeAdmin">Admin oqimi</h3>
+        <ol id="wireframeAdmin" class="list ordered"></ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="microcopy">
+    <div class="section-head">
+      <h2 data-i18n="sectionMicrocopy">UI mikrocopy (UZ/RU)</h2>
+      <p data-i18n="sectionMicrocopySub">Asosiy tugmalar, label va ogohlantirishlar.</p>
+    </div>
+    <div class="card">
+      <table class="microcopy">
+        <thead>
+          <tr>
+            <th data-i18n="microcopyKey">Kalit</th>
+            <th>UZ</th>
+            <th>RU</th>
+          </tr>
+        </thead>
+        <tbody id="microcopyBody"></tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

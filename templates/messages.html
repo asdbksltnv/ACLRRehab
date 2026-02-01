@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="messages">
+    <div class="section-head">
+      <h2 data-i18n="messagesTitle">Xabarlar</h2>
+      <p data-i18n="messagesSub">Shifokor bilan aloqa va eslatmalar.</p>
+    </div>
+    <div class="card">
+      <form class="auth-form" method="post" action="{{ url_for('send_message') }}">
+        <div class="form-field">
+          <label data-i18n="messageLabel">Xabar yozing</label>
+          <textarea name="message" rows="4" placeholder="..."></textarea>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="messageSend">Yuborish</button>
+      </form>
+      <p class="note" data-i18n="messagesHint">Yuborilgan xabarlar admin panelida ko‘rinadi.</p>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="{{ lang|default('uz') }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title or 'Orthopedic Rehab Tracker (UZ/RU)' }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='1.png') }}" />
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='1.png') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body data-lang="{{ lang|default('uz') }}">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-grid"></div>
+
+    {% set admin_url = url_for('admin_dashboard', role='admin') %}
+    {% set specs_url = url_for('admin_specs', role='admin') %}
+    {% set admin_pages = ['admin', 'admin_patients', 'admin_messages', 'admin_protocols', 'admin_exercises'] %}
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">
+          <img src="{{ url_for('static', filename='1.png') }}" alt="Logo" />
+        </div>
+        <div class="brand-text">
+          <div class="brand-title" data-i18n="appName">Orthopedic Rehab Tracker</div>
+          <div class="brand-sub" data-i18n="tagline">
+            UZ/RU mobil reabilitatsiya kuzatuvi va klinika boshqaruvi
+          </div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        {% if is_admin %}
+          <nav class="page-nav" aria-label="Sections">
+            <a class="page-link {{ 'active' if page in admin_pages }}" href="{{ admin_url }}" data-i18n="pageAdmin">
+              Admin
+              <span class="badge" id="adminBadge" aria-hidden="true"></span>
+            </a>
+            <a class="page-link {{ 'active' if page == 'specs' }}" href="{{ specs_url }}" data-i18n="pageSpecs">Specs</a>
+          </nav>
+        {% endif %}
+        <div class="account-actions">
+          {% if is_authenticated %}
+            <span class="account-email">{{ user['email'] }}</span>
+            <a class="btn tiny ghost" href="{{ url_for('logout') }}" data-i18n="logoutLink">Chiqish</a>
+          {% else %}
+            <a class="btn tiny" href="{{ url_for('login') }}" data-i18n="loginLink">Kirish</a>
+            <a class="btn tiny ghost" href="{{ url_for('register') }}" data-i18n="signupLink">Ro'yxatdan o'tish</a>
+          {% endif %}
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button class="lang-btn" data-set-lang="uz">UZ</button>
+          <button class="lang-btn" data-set-lang="ru">RU</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+
+    {% if show_bottom_nav and not is_admin %}
+      <nav class="bottom-nav" aria-label="Primary">
+        <a class="{{ 'active' if page == 'plan' }}" href="{{ url_for('patient_plan') }}" data-i18n="navPlan">Reja</a>
+        <a class="{{ 'active' if page == 'log' }}" href="{{ url_for('patient_log') }}" data-i18n="navLog">Log</a>
+        <a class="{{ 'active' if page == 'progress' }}" href="{{ url_for('patient_progress') }}" data-i18n="navProgress">Progress</a>
+        <a class="{{ 'active' if page == 'messages' }}" href="{{ url_for('patient_chat') }}" data-i18n="navMessages">
+          Xabarlar
+          <span class="badge" id="messagesBadge" aria-hidden="true"></span>
+        </a>
+        <a class="{{ 'active' if page == 'profile' }}" href="{{ url_for('patient_profile') }}" data-i18n="navProfile">Profil</a>
+      </nav>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

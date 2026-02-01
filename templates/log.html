@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="log">
+    <div class="section-head">
+      <h2 data-i18n="diaryTitle">Diary log</h2>
+      <p data-i18n="diarySub">Kundalik holatingizni saqlang.</p>
+    </div>
+    <div class="card form-card">
+      <form method="post" class="form-grid">
+        <div class="form-field">
+          <label data-i18n="labelLogDate">Sana</label>
+          <input type="date" name="log_date" value="{{ today }}" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelDaysPostOp">Post-op kunlar</label>
+          <input type="number" name="days_post_op" min="0" value="{{ default_days or '' }}" placeholder="14" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelPain">Og‘riq (0–10)</label>
+          <input type="number" name="pain_level" min="0" max="10" placeholder="3" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelFlexion">Flexion (°)</label>
+          <input type="number" name="flexion_deg" min="0" max="180" placeholder="90" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelSwelling">Shish</label>
+          <select name="swelling_level">
+            <option value="">—</option>
+            <option value="none" data-i18n="swellingNone">Yo‘q</option>
+            <option value="mild" data-i18n="swellingMild">Yengil</option>
+            <option value="moderate" data-i18n="swellingModerate">O‘rtacha</option>
+            <option value="severe" data-i18n="swellingSevere">Kuchli</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelWB">Weight-bearing</label>
+          <select name="weight_bearing">
+            <option value="" data-i18n="wbOptionNone">—</option>
+            <option value="NWB" data-i18n="wbOptionNWB">NWB (oporasiz)</option>
+            <option value="TTWB" data-i18n="wbOptionTTWB">TTWB (barmoqlar bilan)</option>
+            <option value="PWB" data-i18n="wbOptionPWB">PWB 25–50% (qisman)</option>
+            <option value="WBAT" data-i18n="wbOptionWBAT">WBAT (o‘ziga qulay)</option>
+            <option value="FWB" data-i18n="wbOptionFWB">FWB (to‘liq)</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelNotes">Izohlar</label>
+          <textarea name="notes" rows="3" placeholder="..."></textarea>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="saveButton">Saqlash</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 data-i18n="diaryHistoryTitle">Diary history</h2>
+      <p data-i18n="diaryHistorySub">Oxirgi loglar.</p>
+    </div>
+    <div class="card table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th data-i18n="labelLogDate">Sana</th>
+            <th data-i18n="labelDaysPostOp">Post-op kunlar</th>
+            <th data-i18n="labelPain">Og‘riq</th>
+            <th data-i18n="labelFlexion">Flexion</th>
+            <th data-i18n="labelSwelling">Shish</th>
+            <th data-i18n="labelWB">WB</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log['log_date'] }}</td>
+              <td>{{ log['days_post_op'] or '—' }}</td>
+              <td>{{ log['pain_level'] or '—' }}</td>
+              <td>{{ log['flexion_deg'] or '—' }}</td>
+              <td>{{ log['swelling_level'] or '—' }}</td>
+              <td>{{ log['weight_bearing'] or '—' }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" data-i18n="diaryEmpty">Hozircha log yo‘q.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

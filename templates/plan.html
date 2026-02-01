@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="protocols">
+    <div class="section-head">
+      <h2 data-i18n="planPageTitle">Haftalik reja va protokol</h2>
+      <p data-i18n="planPageSub">Sizga biriktirilgan protokol bo'yicha haftalik WB/ROM/brace limitlari.</p>
+    </div>
+    {% if not user['protocol_id'] %}
+      <div class="notice warn" data-i18n="planMissing">Protokol tanlanmagan. Profilingizda protokolni tanlang.</div>
+    {% else %}
+      <div
+        id="protocolList"
+        class="protocol-list"
+        data-protocol-id="{{ user['protocol_id'] }}"
+        data-current-week="{{ progress['week'] if progress and progress.get('week') else '' }}"
+      ></div>
+    {% endif %}
+    <div class="note" data-i18n="surgeonNote">
+      Eslatma: har bir protokol jarroh ko‘rsatmalariga ko‘ra o‘zgartiriladi.
+    </div>
+  </section>
+
+  <script>
+    window.PROTOCOLS = {{ protocols_json|tojson }};
+    window.EXERCISES = {{ exercises_json|tojson }};
+  </script>
+{% endblock %}

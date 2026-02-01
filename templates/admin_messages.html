@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "admin_nav.html" %}
+
+  <section class="section" id="admin-messages">
+    <div class="section-head">
+      <h2 data-i18n="adminMessagesTitle">Bemor xabarlari</h2>
+      <p data-i18n="adminMessagesSub">Bemorlar yuborgan so‘rovlar.</p>
+    </div>
+    <div class="card table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th data-i18n="tablePatient">Bemor</th>
+            <th data-i18n="tableMessage">Xabar</th>
+            <th data-i18n="tableDate">Sana</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for message in messages %}
+            <tr>
+              <td>{{ message['email'] }}</td>
+              <td>
+                {{ message['body'] }}
+                {% if message['image_url'] %}
+                  <a class="attachment-link" href="{{ message['image_url'] }}" target="_blank" rel="noreferrer" data-i18n="attachmentView">Rasm</a>
+                {% endif %}
+              </td>
+              <td>{{ message['created_at'] }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="3" data-i18n="adminNoMessages">Hozircha xabarlar yo‘q.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

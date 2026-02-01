@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "admin_nav.html" %}
+
+  <section class="section" id="admin-protocols">
+    <div class="section-head">
+      <h2 data-i18n="adminProtocolsTitle">So‘nggi protokollar</h2>
+      <p data-i18n="adminProtocolsSub">Klinika tomonidan boshqariladigan protokollar ro‘yxati.</p>
+    </div>
+    <div class="card">
+      <form class="auth-form" method="post" action="{{ url_for('admin_add_protocol') }}">
+        <div class="form-grid">
+          <div class="form-field">
+            <label data-i18n="labelProtocolUz">Nomi (UZ)</label>
+            <input type="text" name="name_uz" required />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelProtocolRu">Nomi (RU)</label>
+            <input type="text" name="name_ru" required />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelSurgeryTags">Surgery tags</label>
+            <input type="text" name="surgery_tags" placeholder="acl, knee" />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelPhasesJson">Phases JSON</label>
+            <textarea name="phases_json" rows="3" placeholder="[]"></textarea>
+          </div>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="adminAddProtocol">Protokol qo‘shish</button>
+      </form>
+    </div>
+    <div class="card table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th data-i18n="labelProtocol">Protokol</th>
+            <th data-i18n="labelSurgeryTags">Surgery tags</th>
+            <th data-i18n="tableUpdated">Yangilangan</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for protocol in protocols %}
+            <tr>
+              <td>{{ protocol['name_uz'] }} / {{ protocol['name_ru'] }}</td>
+              <td>{{ protocol['surgery_tags'] | join(', ') }}</td>
+              <td>{{ protocol['updated_at'] if protocol['updated_at'] is defined else '' }}</td>
+              <td class="table-actions">
+                <a class="btn tiny" href="{{ url_for('admin_edit_protocol', protocol_id=protocol['id']) }}" data-i18n="editButton">Tahrirlash</a>
+                <form method="post" action="{{ url_for('admin_delete_protocol', protocol_id=protocol['id']) }}">
+                  <button class="btn ghost tiny" type="submit" data-i18n="deleteButton">O‘chirish</button>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" data-i18n="adminNoProtocols">Hozircha protokollar yo‘q.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

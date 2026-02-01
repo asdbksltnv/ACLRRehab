@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="profile">
+    <div class="section-head">
+      <h2 data-i18n="dashboardTitle">Sizning reabilitatsiya panelingiz</h2>
+      <p data-i18n="dashboardSub">Operatsiya sanasi va protokol bo'yicha progress.</p>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3 data-i18n="profileTitle">Operatsiya ma'lumotlari</h3>
+        {% if not user['surgery_date'] %}
+          <div class="notice warn" data-i18n="surgeryMissing">Operatsiya sanasi kiritilmagan.</div>
+        {% endif %}
+        <form method="post" class="auth-form">
+          <div class="form-field">
+            <label data-i18n="labelSurgeryDate">Operatsiya sanasi</label>
+            <input type="date" name="surgery_date" value="{{ user['surgery_date'] or '' }}" />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelPostopWeek">Post-op hafta (qo'lda)</label>
+            <input
+              type="number"
+              name="postop_week"
+              min="1"
+              value="{{ user['week_override'] or '' }}"
+              placeholder="1"
+            />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelProtocol">Protokol</label>
+            <select name="protocol_id" data-protocol-select>
+              <option value="">—</option>
+              {% for protocol in protocol_options %}
+                <option
+                  value="{{ protocol.id }}"
+                  data-label-uz="{{ protocol.name_uz }}"
+                  data-label-ru="{{ protocol.name_ru }}"
+                  {% if user['protocol_id'] == protocol.id %}selected{% endif %}
+                >
+                  {{ protocol.name_uz }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <button class="btn primary" type="submit" data-i18n="updateButton">Yangilash</button>
+        </form>
+      </div>
+      <div class="card" id="progress">
+        <h3 data-i18n="progressTitle">Progress</h3>
+        {% if progress.status == 'active' %}
+          <div class="progress-grid">
+            <div class="progress-item">
+              <span data-i18n="progressWeek">Joriy hafta</span>
+              <strong>W{{ progress.week }}</strong>
+            </div>
+            <div class="progress-item">
+              <span data-i18n="progressDays">Kunlar o'tdi</span>
+              <strong>{{ progress.days_since }}</strong>
+            </div>
+            <div class="progress-item">
+              <span data-i18n="labelSurgeryDate">Operatsiya sanasi</span>
+              <strong>{{ user['surgery_date'] or '—' }}</strong>
+            </div>
+          </div>
+        {% elif progress.status == 'manual' %}
+          <div class="progress-grid">
+            <div class="progress-item">
+              <span data-i18n="progressManual">Post-op hafta (qo'lda)</span>
+              <strong>W{{ progress.week }}</strong>
+            </div>
+            <div class="progress-item">
+              <span data-i18n="progressDays">Kunlar o'tdi</span>
+              <strong>{{ progress.days_since }}</strong>
+            </div>
+          </div>
+        {% elif progress.status == 'upcoming' %}
+          <div class="progress-grid">
+            <div class="progress-item">
+              <span data-i18n="progressUpcoming">Operatsiyagacha qolgan</span>
+              <strong>{{ progress.days_until }}</strong>
+            </div>
+            <div class="progress-item">
+              <span data-i18n="labelSurgeryDate">Operatsiya sanasi</span>
+              <strong>{{ user['surgery_date'] or '—' }}</strong>
+            </div>
+          </div>
+        {% else %}
+          <p data-i18n="progressMissing">Progressni ko'rish uchun operatsiya sanasini kiriting.</p>
+        {% endif %}
+        {% if protocol %}
+          <div class="protocol-summary">
+            <span data-i18n="labelProtocol">Protokol</span>
+            <strong>{{ protocol.name_uz }} / {{ protocol.name_ru }}</strong>
+          </div>
+        {% endif %}
+        <a class="btn ghost" href="{{ url_for('patient_plan') }}" data-i18n="viewPlanButton">Rejani ko‘rish</a>
+      </div>
+    </div>
+    <div
+      id="weekSummary"
+      class="card week-summary"
+      data-protocol-id="{{ user['protocol_id'] or '' }}"
+      data-current-week="{{ progress['week'] if progress and progress.get('week') else '' }}"
+    ></div>
+  </section>
+
+  <section class="section" id="log">
+    <div class="section-head">
+      <h2 data-i18n="sectionLog">Kundalik log (tezkor)</h2>
+      <p data-i18n="sectionLogSub">30 soniyada to‘ldiriladigan thumb-friendly shakl.</p>
+    </div>
+    <div class="card form-card">
+      <div class="form-grid">
+        <div class="form-field">
+          <label data-i18n="labelPain">Og‘riq (0–10)</label>
+          <input type="range" min="0" max="10" value="3" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelSwelling">Shish</label>
+          <div class="pill-group">
+            <button class="pill-btn active" data-i18n="swellingNone">Yo‘q</button>
+            <button class="pill-btn" data-i18n="swellingMild">Yengil</button>
+            <button class="pill-btn" data-i18n="swellingModerate">O‘rtacha</button>
+            <button class="pill-btn" data-i18n="swellingSevere">Kuchli</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelRom">ROM (°)</label>
+          <div class="split">
+            <input type="number" placeholder="Extension" />
+            <input type="number" placeholder="Flexion" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelWB">Weight-bearing</label>
+          <select>
+            <option>NWB</option>
+            <option>TTWB</option>
+            <option>PWB 25–50%</option>
+            <option>WBAT</option>
+            <option>FWB</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelExercises">Mashqlar</label>
+          <div class="checkbox-list">
+            <label><input type="checkbox" checked /> Quad set</label>
+            <label><input type="checkbox" /> Heel slide</label>
+            <label><input type="checkbox" /> Straight-leg raise</label>
+          </div>
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelNotes">Izohlar + foto</label>
+          <input type="text" placeholder="Bugungi holat..." />
+          <button class="btn ghost" data-i18n="ctaUpload">Yuklash</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="messages">
+    <div class="section-head">
+      <h2 data-i18n="messagesTitle">Xabarlar</h2>
+      <p data-i18n="messagesSub">Shifokor bilan aloqa va eslatmalar.</p>
+    </div>
+    <div class="card">
+      <form class="auth-form" method="post" action="{{ url_for('send_message') }}">
+        <div class="form-field">
+          <label data-i18n="messageLabel">Xabar yozing</label>
+          <textarea name="message" rows="4" placeholder="..."></textarea>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="messageSend">Yuborish</button>
+      </form>
+      <p class="note" data-i18n="messagesHint">Yuborilgan xabarlar admin panelida ko‘rinadi.</p>
+    </div>
+  </section>
+
+  <section class="section" id="protocols">
+    <div class="section-head">
+      <h2 data-i18n="planPageTitle">Haftalik reja va protokol</h2>
+      <p data-i18n="planPageSub">Sizga biriktirilgan protokol bo'yicha haftalik WB/ROM/brace limitlari.</p>
+    </div>
+    {% if not user['protocol_id'] %}
+      <div class="notice warn" data-i18n="planMissing">Protokol tanlanmagan. Profilingizda protokolni tanlang.</div>
+    {% else %}
+      <div
+        id="protocolList"
+        class="protocol-list"
+        data-protocol-id="{{ user['protocol_id'] }}"
+        data-current-week="{{ progress['week'] if progress and progress.get('week') else '' }}"
+      ></div>
+    {% endif %}
+  </section>
+{% endblock %}

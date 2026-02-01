@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="messages">
+    <div class="section-head">
+      <h2 data-i18n="chatTitle">Chat with physician</h2>
+      <p data-i18n="chatSub">Savollaringizni yuboring, shifokor javob beradi.</p>
+    </div>
+    <div class="card chat-card">
+      <div class="chat-thread">
+        {% for message in messages %}
+          <div class="chat-bubble {{ 'from-patient' if message['sender_role'] == 'patient' else 'from-admin' }}">
+            <div class="chat-meta">
+              {% if message['sender_role'] == 'patient' %}
+                <span data-i18n="chatYou">{{ 'Siz' if lang == 'uz' else 'Вы' }}</span>
+              {% else %}
+                <span data-i18n="chatDoctor">{{ 'Shifokor' if lang == 'uz' else 'Врач' }}</span>
+              {% endif %}
+              <span>{{ message['created_at'] }}</span>
+            </div>
+            {% if message['body'] %}
+              <div class="chat-body">{{ message['body'] }}</div>
+            {% endif %}
+            {% if message['image_url'] %}
+              <img class="chat-image" src="{{ message['image_url'] }}" alt="Attachment" />
+            {% endif %}
+          </div>
+        {% else %}
+          <p class="note" data-i18n="chatEmpty">Hozircha xabarlar yo‘q.</p>
+        {% endfor %}
+      </div>
+      <form class="chat-composer" method="post" action="{{ url_for('send_message') }}" enctype="multipart/form-data">
+        <label class="file-pill">
+          <input class="file-input" type="file" name="image" accept="image/*" />
+          <span data-i18n="attachImage">Rasm</span>
+        </label>
+        <div class="form-field">
+          <label class="sr-only" data-i18n="messageLabel">Xabar yozing</label>
+          <textarea name="message" rows="3" placeholder="..."></textarea>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="messageSend">Yuborish</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

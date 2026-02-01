@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="hero">
+    <div class="card hero-card">
+      <div class="pill" data-i18n="pillWelcome">Xush kelibsiz</div>
+      <h1 data-i18n="heroTitle">Ortopedik reabilitatsiya kuzatuvchisi</h1>
+      <p data-i18n="heroIntro">
+        Haftalik protokollar, kundalik log va ogohlantirishlar bilan xavfsiz, tushunarli va tez
+        foydalanish uchun ishlab chiqilgan mobil tajriba.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="{{ url_for('login') }}" data-i18n="ctaLogin">Kirish</a>
+        <a class="btn ghost" href="{{ url_for('register') }}" data-i18n="ctaSignup">Ro'yxatdan o'tish</a>
+      </div>
+      <p class="auth-hint" data-i18n="loginPrompt">Reja va progressni ko‘rish uchun tizimga kiring.</p>
+    </div>
+    <div class="card mini">
+      <div class="card-head">
+        <h3 data-i18n="whyTitle">Nima olasiz</h3>
+      </div>
+      <ul class="list">
+        <li data-i18n="why1">Post-op hafta bo‘yicha aniq ko‘rsatmalar</li>
+        <li data-i18n="why2">Mashqlar ro‘yxati, WB/ROM limitlari</li>
+        <li data-i18n="why3">Shifokor bilan xabar almashish</li>
+      </ul>
+    </div>
+  </section>
+{% endblock %}

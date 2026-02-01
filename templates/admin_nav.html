@@ -1,0 +1,17 @@
+<nav class="admin-subnav" aria-label="Admin sections">
+  <a class="admin-link {{ 'active' if page == 'admin' }}" href="{{ url_for('admin_dashboard') }}" data-i18n="adminNavOverview">
+    Dashboard
+  </a>
+  <a class="admin-link {{ 'active' if page == 'admin_patients' }}" href="{{ url_for('admin_patients') }}" data-i18n="adminNavPatients">
+    Patients
+  </a>
+  <a class="admin-link {{ 'active' if page == 'admin_messages' }}" href="{{ url_for('admin_messages') }}" data-i18n="adminNavMessages">
+    Messages
+  </a>
+  <a class="admin-link {{ 'active' if page == 'admin_protocols' }}" href="{{ url_for('admin_protocols') }}" data-i18n="adminNavProtocols">
+    Protocols
+  </a>
+  <a class="admin-link {{ 'active' if page == 'admin_exercises' }}" href="{{ url_for('admin_exercises') }}" data-i18n="adminNavExercises">
+    Exercises
+  </a>
+</nav>

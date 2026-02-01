@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section auth">
+    <div class="card auth-card">
+      <h2 data-i18n="loginTitle">Kirish</h2>
+      <p data-i18n="loginSub">Hisobingizga kiring va reja bo'yicha davom eting.</p>
+      {% if error_key %}
+        <div class="alert danger" data-i18n="{{ error_key }}">{{ error_message }}</div>
+      {% endif %}
+      <form method="post" class="auth-form">
+        <div class="form-field">
+          <label data-i18n="labelLogin">Email / Username</label>
+          <input type="text" name="email" required />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelPassword">Parol</label>
+          <input type="password" name="password" required />
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" data-i18n="loginButton">Kirish</button>
+          <a class="btn ghost" href="{{ url_for('register') }}" data-i18n="signupLink">Ro'yxatdan o'tish</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

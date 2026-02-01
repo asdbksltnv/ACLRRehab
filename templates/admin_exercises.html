@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "admin_nav.html" %}
+
+  <section class="section" id="exercises">
+    <div class="section-head">
+      <h2 data-i18n="sectionExercises">Mashqlar kutubxonasi</h2>
+      <p data-i18n="sectionExercisesSub">Admin tahrirlaydi, YouTube havolasi biriktiradi.</p>
+    </div>
+    <div class="card">
+      <form class="auth-form" method="post" action="{{ url_for('admin_add_exercise') }}">
+        <div class="form-grid">
+          <div class="form-field">
+            <label data-i18n="labelExerciseUz">Nomi (UZ)</label>
+            <input type="text" name="name_uz" required />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelExerciseRu">Nomi (RU)</label>
+            <input type="text" name="name_ru" required />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelDescriptionUz">Tavsif (UZ)</label>
+            <textarea name="description_uz" rows="3"></textarea>
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelDescriptionRu">Tavsif (RU)</label>
+            <textarea name="description_ru" rows="3"></textarea>
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelSetsReps">Sets/Reps</label>
+            <input type="text" name="sets_reps" placeholder="3 x 10" />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelPrecautionsUz">Ehtiyot choralari (UZ)</label>
+            <input type="text" name="precautions_uz" />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelPrecautionsRu">Ehtiyot choralari (RU)</label>
+            <input type="text" name="precautions_ru" />
+          </div>
+          <div class="form-field">
+            <label data-i18n="labelYoutube">YouTube link</label>
+            <input type="url" name="youtube_url" placeholder="https://youtu.be/..." />
+          </div>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="adminAddExercise">Mashq qo‘shish</button>
+      </form>
+    </div>
+    <div class="card table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th data-i18n="labelExercises">Mashqlar</th>
+            <th data-i18n="labelYoutube">YouTube</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for exercise in exercises %}
+            <tr>
+              <td>{{ exercise['name_uz'] }} / {{ exercise['name_ru'] }}</td>
+              <td>
+                {% if exercise['youtube_url'] %}
+                  <a href="{{ exercise['youtube_url'] }}" target="_blank" rel="noopener">YouTube</a>
+                {% else %}
+                  —
+                {% endif %}
+              </td>
+              <td class="table-actions">
+                <a class="btn tiny" href="{{ url_for('admin_edit_exercise', exercise_id=exercise['id']) }}" data-i18n="editButton">Tahrirlash</a>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="3" data-i18n="adminNoExercises">Hozircha mashqlar yo‘q.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

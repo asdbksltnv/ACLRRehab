@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "admin_nav.html" %}
+
+  <section class="section">
+    <div class="section-head">
+      <h2 data-i18n="adminPatientTitle">Bemor profili</h2>
+      <p>{{ patient['email'] }}</p>
+    </div>
+    <div class="card">
+      <form class="auth-form" method="post">
+        <div class="form-field">
+          <label data-i18n="labelSurgeryDate">Operatsiya sanasi</label>
+          <input type="date" name="surgery_date" value="{{ patient['surgery_date'] or '' }}" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelPostopWeek">Post-op hafta (qo'lda)</label>
+          <input type="number" name="postop_week" min="1" value="{{ patient['week_override'] or '' }}" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelProtocol">Protokol</label>
+          <select name="protocol_id" data-protocol-select>
+            <option value="">—</option>
+            {% for protocol in protocol_options %}
+              <option
+                value="{{ protocol.id }}"
+                data-label-uz="{{ protocol.name_uz }}"
+                data-label-ru="{{ protocol.name_ru }}"
+                {% if patient['protocol_id'] == protocol.id %}selected{% endif %}
+              >
+                {{ protocol.name_uz }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="updateButton">Yangilash</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 data-i18n="adminMessagesTitle">Bemor xabarlari</h2>
+      <p data-i18n="adminMessagesSub">Bemor bilan to‘g‘ridan to‘g‘ri chat.</p>
+    </div>
+    <div class="card chat-card">
+      <div class="chat-thread">
+        {% for message in messages %}
+          <div class="chat-bubble {{ 'from-admin' if message['sender_role'] == 'admin' else 'from-patient' }}">
+            <div class="chat-meta">
+              {% if message['sender_role'] == 'admin' %}
+                <span data-i18n="chatYou">{{ 'Siz' if lang == 'uz' else 'Вы' }}</span>
+              {% else %}
+                <span>{{ patient['email'] }}</span>
+              {% endif %}
+              <span>{{ message['created_at'] }}</span>
+            </div>
+            {% if message['body'] %}
+              <div class="chat-body">{{ message['body'] }}</div>
+            {% endif %}
+            {% if message['image_url'] %}
+              <img class="chat-image" src="{{ message['image_url'] }}" alt="Attachment" />
+            {% endif %}
+          </div>
+        {% else %}
+          <p class="note" data-i18n="chatEmpty">Hozircha xabarlar yo‘q.</p>
+        {% endfor %}
+      </div>
+      <form class="chat-composer" method="post" action="{{ url_for('admin_patient_chat', user_id=patient['id']) }}" enctype="multipart/form-data">
+        <label class="file-pill">
+          <input class="file-input" type="file" name="image" accept="image/*" />
+          <span data-i18n="attachImage">Rasm</span>
+        </label>
+        <div class="form-field">
+          <label class="sr-only" data-i18n="messageLabel">Xabar yozing</label>
+          <textarea name="message" rows="3" placeholder="..."></textarea>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="messageSend">Yuborish</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

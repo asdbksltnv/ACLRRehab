@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "admin_nav.html" %}
+
+  <section class="section admin-hero">
+    <div class="card hero-card">
+      <div class="pill" data-i18n="adminPill">Admin panel</div>
+      <h1 data-i18n="adminTitle">Klinika boshqaruvi va protokol builder</h1>
+      <p data-i18n="adminIntro">
+        Bemorlarni boshqaring, protokollarni tahrirlang, mashqlar kutubxonasini yuriting va progress
+        alertlarini kuzating.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="{{ url_for('admin_patients') }}" data-i18n="adminCtaPatients">Bemorlarni ko'rish</a>
+        <a class="btn ghost" href="{{ url_for('admin_protocols') }}" data-i18n="adminCtaProtocol">Protokol yaratish</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="admin-stats">
+    <div class="section-head">
+      <h2 data-i18n="adminStatsTitle">Tezkor statistika</h2>
+      <p data-i18n="adminStatsSub">Klinika faoliyati bo‘yicha qisqa ko‘rinish.</p>
+    </div>
+    <div class="grid four">
+      <div class="card mini">
+        <span class="stat-label" data-i18n="adminStatPatients">Bemorlar</span>
+        <div class="stat-value">{{ stats['patients'] }}</div>
+      </div>
+      <div class="card mini">
+        <span class="stat-label" data-i18n="adminStatUnread">Yangi xabarlar</span>
+        <div class="stat-value">{{ stats['unread'] }}</div>
+      </div>
+      <div class="card mini">
+        <span class="stat-label" data-i18n="adminStatProtocols">Protokollar</span>
+        <div class="stat-value">{{ stats['protocols'] }}</div>
+      </div>
+      <div class="card mini">
+        <span class="stat-label" data-i18n="adminStatExercises">Mashqlar</span>
+        <div class="stat-value">{{ stats['exercises'] }}</div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

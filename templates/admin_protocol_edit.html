@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "admin_nav.html" %}
+
+  <section class="section">
+    <div class="section-head">
+      <h2 data-i18n="editProtocolTitle">Protokolni tahrirlash</h2>
+      <p data-i18n="editProtocolSub">Phases JSON ni ehtiyotkorlik bilan yangilang.</p>
+    </div>
+    <div class="card">
+      <form class="auth-form" method="post">
+        <div class="form-field">
+          <label data-i18n="labelProtocolUz">Nomi (UZ)</label>
+          <input type="text" name="name_uz" value="{{ protocol['name_uz'] }}" required />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelProtocolRu">Nomi (RU)</label>
+          <input type="text" name="name_ru" value="{{ protocol['name_ru'] }}" required />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelSurgeryTags">Surgery tags</label>
+          <input type="text" name="surgery_tags" value="{{ surgery_tags }}" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelPhasesJson">Phases JSON</label>
+          <textarea name="phases_json" rows="14">{{ phases_json }}</textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" data-i18n="saveButton">Saqlash</button>
+          <a class="btn ghost" href="{{ url_for('admin_protocols') }}" data-i18n="cancelButton">Bekor qilish</a>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section">
+    <div class="section-head">
+      <h2 data-i18n="profileTitle">Operatsiya ma'lumotlari</h2>
+      <p data-i18n="dashboardSub">Operatsiya sanasi va protokol bo'yicha progress.</p>
+    </div>
+    <div class="card">
+      {% if not user['surgery_date'] %}
+        <div class="notice warn" data-i18n="surgeryMissing">Operatsiya sanasi kiritilmagan.</div>
+      {% endif %}
+      <form method="post" class="auth-form">
+        <div class="form-field">
+          <label data-i18n="labelSurgeryDate">Operatsiya sanasi</label>
+          <input type="date" name="surgery_date" value="{{ user['surgery_date'] or '' }}" />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelPostopWeek">Post-op hafta (qo'lda)</label>
+          <input
+            type="number"
+            name="postop_week"
+            min="1"
+            value="{{ user['week_override'] or '' }}"
+            placeholder="1"
+          />
+        </div>
+        <div class="form-field">
+          <label data-i18n="labelProtocol">Protokol</label>
+          <select name="protocol_id" data-protocol-select>
+            <option value="">—</option>
+            {% for protocol in protocol_options %}
+              <option
+                value="{{ protocol.id }}"
+                data-label-uz="{{ protocol.name_uz }}"
+                data-label-ru="{{ protocol.name_ru }}"
+                {% if user['protocol_id'] == protocol.id %}selected{% endif %}
+              >
+                {{ protocol.name_uz }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <button class="btn primary" type="submit" data-i18n="updateButton">Yangilash</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

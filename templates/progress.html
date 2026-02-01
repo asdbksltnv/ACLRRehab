@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section">
+    <div class="section-head">
+      <h2 data-i18n="progressTitle">Progress</h2>
+      <p data-i18n="dashboardSub">Operatsiya sanasi va protokol bo'yicha progress.</p>
+    </div>
+    <div class="card">
+      {% if progress.status == 'active' %}
+        <div class="progress-grid">
+          <div class="progress-item">
+            <span data-i18n="progressWeek">Joriy hafta</span>
+            <strong>W{{ progress.week }}</strong>
+          </div>
+          <div class="progress-item">
+            <span data-i18n="progressDays">Kunlar o'tdi</span>
+            <strong>{{ progress.days_since }}</strong>
+          </div>
+          <div class="progress-item">
+            <span data-i18n="labelSurgeryDate">Operatsiya sanasi</span>
+            <strong>{{ user['surgery_date'] or '—' }}</strong>
+          </div>
+        </div>
+      {% elif progress.status == 'manual' %}
+        <div class="progress-grid">
+          <div class="progress-item">
+            <span data-i18n="progressManual">Post-op hafta (qo'lda)</span>
+            <strong>W{{ progress.week }}</strong>
+          </div>
+          <div class="progress-item">
+            <span data-i18n="progressDays">Kunlar o'tdi</span>
+            <strong>{{ progress.days_since }}</strong>
+          </div>
+        </div>
+      {% elif progress.status == 'upcoming' %}
+        <div class="progress-grid">
+          <div class="progress-item">
+            <span data-i18n="progressUpcoming">Operatsiyagacha qolgan</span>
+            <strong>{{ progress.days_until }}</strong>
+          </div>
+          <div class="progress-item">
+            <span data-i18n="labelSurgeryDate">Operatsiya sanasi</span>
+            <strong>{{ user['surgery_date'] or '—' }}</strong>
+          </div>
+        </div>
+      {% else %}
+        <p data-i18n="progressMissing">Progressni ko'rish uchun operatsiya sanasini kiriting.</p>
+      {% endif %}
+      {% if protocol %}
+        <div class="protocol-summary">
+          <span data-i18n="labelProtocol">Protokol</span>
+          <strong>{{ protocol.name_uz }} / {{ protocol.name_ru }}</strong>
+        </div>
+      {% endif %}
+      <a class="btn ghost" href="{{ url_for('patient_plan') }}" data-i18n="viewPlanButton">Rejani ko‘rish</a>
+    </div>
+    <div
+      id="weekSummary"
+      class="card week-summary"
+      data-protocol-id="{{ user['protocol_id'] or '' }}"
+      data-current-week="{{ progress['week'] if progress and progress.get('week') else '' }}"
+    ></div>
+  </section>
+
+  <script>
+    window.PROTOCOLS = {{ protocols_json|tojson }};
+    window.EXERCISES = {{ exercises_json|tojson }};
+  </script>
+{% endblock %}

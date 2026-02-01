@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section">
+    <div class="card gate">
+      <div class="pill" data-i18n="adminGatePill">Admin only</div>
+      <h2 data-i18n="adminGateTitle">Admin ruxsati talab qilinadi</h2>
+      <p data-i18n="adminGateBody">
+        Ushbu sahifa faqat klinika adminlari uchun. Demo uchun admin rejimini yoqing.
+      </p>
+      <a class="btn primary" href="{{ target_url }}" data-i18n="adminGateCta">Admin rejimi (demo)</a>
+    </div>
+  </section>
+{% endblock %}
