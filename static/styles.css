@@ -99,7 +99,10 @@ body {
   justify-content: space-between;
   padding: 28px 28px;
   gap: 12px;
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid var(--stroke);
   backdrop-filter: blur(10px);
+  transition: padding 0.2s ease, box-shadow 0.2s ease;
 }
 
 .topbar-actions {
@@ -205,6 +208,17 @@ body {
   color: #0b3a2d;
   box-shadow: none;
   border: none;
+  transition: width 0.2s ease, height 0.2s ease;
+}
+
+.topbar.scrolled {
+  padding: 18px 24px;
+  box-shadow: 0 8px 24px rgba(18, 33, 43, 0.1);
+}
+
+.topbar.scrolled .logo {
+  width: 48px;
+  height: 48px;
 }
 
 .logo img {
@@ -1247,6 +1261,10 @@ body {
     padding: 18px 16px;
   }
 
+  .topbar.scrolled {
+    padding: 14px 16px;
+  }
+
   .admin-subnav {
     top: var(--topbar-offset);
   }
@@ -1255,6 +1273,11 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 12px;
+  }
+
+  .topbar.scrolled .logo {
+    width: 36px;
+    height: 36px;
   }
 
   .brand-title {

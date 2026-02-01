@@ -1256,10 +1256,22 @@ def admin_patient_detail(user_id):
         (user_id,),
     )
     messages = fetch_chat_messages(user_id)
+    logs = query_db(
+        """
+        SELECT id, log_date, days_post_op, pain_level, flexion_deg, swelling_level,
+               weight_bearing, notes, created_at
+        FROM diary_logs
+        WHERE patient_id = ?
+        ORDER BY log_date DESC, created_at DESC
+        LIMIT 50
+        """,
+        (user_id,),
+    )
     return render_template(
         "admin_patient.html",
         patient=patient,
         messages=messages,
+        logs=logs,
         protocol_options=get_protocol_options(),
         **page_context("admin_patients", False),
     )

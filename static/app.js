@@ -180,6 +180,10 @@ const APP_DATA = {
       adminMessagesTitle: "Bemor xabarlari",
       adminMessagesSub: "Bemorlar yuborgan so‘rovlar.",
       adminNoMessages: "Hozircha xabarlar yo‘q.",
+      adminLogsTitle: "Bemor loglari",
+      adminLogsSub: "Kundalik holat yozuvlari va kuzatuvlar.",
+      adminNoLogs: "Hozircha log yo‘q.",
+      viewLogsButton: "Loglar",
       adminProtocolsTitle: "So‘nggi protokollar",
       adminProtocolsSub: "Klinika tomonidan boshqariladigan protokollar ro‘yxati.",
       adminAddProtocol: "Protokol qo‘shish",
@@ -422,6 +426,10 @@ const APP_DATA = {
       adminMessagesTitle: "Сообщения пациентов",
       adminMessagesSub: "Запросы, отправленные пациентами.",
       adminNoMessages: "Сообщений пока нет.",
+      adminLogsTitle: "Дневные логи пациента",
+      adminLogsSub: "Ежедневные записи состояния и наблюдения.",
+      adminNoLogs: "Записей пока нет.",
+      viewLogsButton: "Логи",
       adminProtocolsTitle: "Актуальные протоколы",
       adminProtocolsSub: "Список протоколов клиники.",
       adminAddProtocol: "Добавить протокол",
@@ -1720,9 +1728,20 @@ const initChatScroll = () => {
   thread.scrollTop = thread.scrollHeight;
 };
 
+const initTopbarScroll = () => {
+  const topbar = document.querySelector(".topbar");
+  if (!topbar) return;
+  const onScroll = () => {
+    topbar.classList.toggle("scrolled", window.scrollY > 8);
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+};
+
 initLangToggle();
 applyTranslations();
 initFlexionGuide();
 initCardDelays();
 initUnreadPolling();
 initChatScroll();
+initTopbarScroll();

@@ -80,4 +80,43 @@
       </form>
     </div>
   </section>
+
+  <section class="section" id="patient-logs">
+    <div class="section-head">
+      <h2 data-i18n="adminLogsTitle">Bemor loglari</h2>
+      <p data-i18n="adminLogsSub">Kundalik holat yozuvlari va kuzatuvlar.</p>
+    </div>
+    <div class="card table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th data-i18n="labelLogDate">Sana</th>
+            <th data-i18n="labelDaysPostOp">Post-op kunlar</th>
+            <th data-i18n="labelPain">Og‘riq</th>
+            <th data-i18n="labelFlexion">Flexion</th>
+            <th data-i18n="labelSwelling">Shish</th>
+            <th data-i18n="labelWB">WB</th>
+            <th data-i18n="labelNotes">Izohlar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log['log_date'] }}</td>
+              <td>{{ log['days_post_op'] or '—' }}</td>
+              <td>{{ log['pain_level'] or '—' }}</td>
+              <td>{{ log['flexion_deg'] or '—' }}</td>
+              <td>{{ log['swelling_level'] or '—' }}</td>
+              <td>{{ log['weight_bearing'] or '—' }}</td>
+              <td>{{ log['notes'] or '—' }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="7" data-i18n="adminNoLogs">Hozircha log yo‘q.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 {% endblock %}

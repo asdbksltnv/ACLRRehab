@@ -67,6 +67,7 @@
               <td>{{ patient['protocol_id'] or '—' }}</td>
               <td class="table-actions">
                 <a class="btn tiny" href="{{ url_for('admin_patient_detail', user_id=patient['id']) }}" data-i18n="viewButton">Ko‘rish</a>
+                <a class="btn ghost tiny" href="{{ url_for('admin_patient_detail', user_id=patient['id']) }}#patient-logs" data-i18n="viewLogsButton">Loglar</a>
                 <form method="post" action="{{ url_for('admin_delete_patient', user_id=patient['id']) }}">
                   <button class="btn ghost tiny" type="submit" data-i18n="deleteButton">O‘chirish</button>
                 </form>
