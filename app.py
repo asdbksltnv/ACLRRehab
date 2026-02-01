@@ -1026,6 +1026,20 @@ def patient_plan():
     )
 
 
+@app.route("/exercises")
+@login_required
+def patient_exercises():
+    user = current_user()
+    if user and user["role"] == "admin":
+        return redirect(url_for("admin_exercises"))
+    exercises = fetch_exercises()
+    return render_template(
+        "exercises.html",
+        exercises_json=exercises,
+        **page_context("exercises", True),
+    )
+
+
 @app.route("/admin")
 @admin_required
 def admin_dashboard():

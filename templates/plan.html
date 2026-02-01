@@ -6,6 +6,9 @@
       <h2 data-i18n="planPageTitle">Haftalik reja va protokol</h2>
       <p data-i18n="planPageSub">Sizga biriktirilgan protokol bo'yicha haftalik WB/ROM/brace limitlari.</p>
     </div>
+    <div class="section-actions">
+      <a class="btn ghost" href="{{ url_for('patient_exercises') }}" data-i18n="viewExercisesButton">Mashqlar kutubxonasi</a>
+    </div>
     {% if not user['protocol_id'] %}
       <div class="notice warn" data-i18n="planMissing">Protokol tanlanmagan. Profilingizda protokolni tanlang.</div>
     {% else %}

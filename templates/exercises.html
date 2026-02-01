@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section" id="exercise-library">
+    <div class="section-head">
+      <h2 data-i18n="exerciseLibraryTitle">Mashqlar kutubxonasi</h2>
+      <p data-i18n="exerciseLibrarySub">Barcha mashqlar, tavsif va YouTube videolari.</p>
+    </div>
+    <div id="exerciseLibrary" class="exercise-library"></div>
+  </section>
+
+  <script>
+    window.EXERCISES = {{ exercises_json|tojson }};
+  </script>
+{% endblock %}

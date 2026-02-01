@@ -145,6 +145,10 @@ const APP_DATA = {
       planCtaButton: "Rejani ochish",
       planPageTitle: "Haftalik reja va protokol",
       planPageSub: "Sizga biriktirilgan protokol bo'yicha haftalik WB/ROM/brace limitlari.",
+      viewExercisesButton: "Mashqlar kutubxonasi",
+      exerciseLibraryTitle: "Mashqlar kutubxonasi",
+      exerciseLibrarySub: "Barcha mashqlar, tavsif va YouTube videolari.",
+      exerciseLibraryEmpty: "Hozircha mashqlar yo‘q.",
       adminPill: "Admin panel",
       adminTitle: "Klinika boshqaruvi va protokol builder",
       adminIntro:
@@ -383,6 +387,10 @@ const APP_DATA = {
       planCtaButton: "Открыть план",
       planPageTitle: "Недельный план и протокол",
       planPageSub: "Лимиты WB/ROM/брейс по назначенному протоколу.",
+      viewExercisesButton: "Библиотека упражнений",
+      exerciseLibraryTitle: "Библиотека упражнений",
+      exerciseLibrarySub: "Все упражнения с описанием и видео YouTube.",
+      exerciseLibraryEmpty: "Пока нет упражнений.",
       adminPill: "Админ панель",
       adminTitle: "Управление клиникой и протокол builder",
       adminIntro:
@@ -1538,6 +1546,10 @@ const renderExercises = () => {
   const container = document.getElementById("exerciseLibrary");
   if (!container) return;
   container.innerHTML = "";
+  if (!APP_DATA.exercises.length) {
+    container.innerHTML = `<p class="note" data-i18n="exerciseLibraryEmpty">${APP_DATA.ui[state.lang].exerciseLibraryEmpty}</p>`;
+    return;
+  }
   APP_DATA.exercises.forEach((exercise, index) => {
     const { text: name, missing } = pickField(exercise, "name", state.lang);
     const { text: desc } = pickField(exercise, "desc", state.lang);
@@ -1548,10 +1560,12 @@ const renderExercises = () => {
     const fallbackLabel = missing
       ? `<span class="translation-label">${APP_DATA.ui[state.lang].translationFallback}</span>`
       : "";
+    const youtube = exercise.youtube_url ? buildYouTubeEmbed(exercise.youtube_url, name) : "";
     card.innerHTML = `
       <h4>${name}${fallbackLabel}</h4>
-      <p>${desc}</p>
-      <div class="exercise-meta">${exercise.sets_reps} · ${precautions}</div>
+      <p>${desc || "—"}</p>
+      <div class="exercise-meta">${exercise.sets_reps || "—"} · ${precautions || "—"}</div>
+      ${youtube}
     `;
     container.appendChild(card);
   });
